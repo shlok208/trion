@@ -42,6 +42,8 @@
   var heroOverlay = document.getElementById('heroOverlay');
   var heroVisual = document.querySelector('.hero-visual');
   var phaseSection = document.getElementById('method');
+  var methodTitle = document.getElementById('methodTitle');
+  var methodGhost = document.getElementById('methodGhost');
   var canvas = document.getElementById('methodCanvas');
   var ctx = canvas.getContext('2d');
   var railItems = document.querySelectorAll('#phaseRail li');
@@ -51,6 +53,7 @@
   var images = [];
   var currentIndex = -1;
   var currentPhase = -1;
+  var methodTitles = ['Discover', 'Plan', 'Build', 'Test', 'Launch'];
   var dpr = Math.min(window.devicePixelRatio || 1, 1.5);
   var playbackIndex = 0;
   var playbackDirection = 1;
@@ -80,18 +83,35 @@
 
   function setPhase(idx){
     currentPhase = idx;
+    methodTitle.textContent = methodTitles[idx];
+    methodGhost.textContent = '0' + (idx + 1);
+    methodTitle.classList.remove('method-title-in');
+    void methodTitle.offsetWidth;
+    methodTitle.classList.add('method-title-in');
     railItems.forEach(function(li,i){ li.classList.toggle('active', i===idx); });
     phaseBlocks.forEach(function(pb){ pb.classList.toggle('active', parseInt(pb.dataset.phase,10)===idx); });
   }
 
   function updatePhase(){
-    if(!images.length) return;
     var phaseRect = phaseSection.getBoundingClientRect();
     var phaseScrollable = phaseRect.height - window.innerHeight;
     var phaseProgress = phaseScrollable > 0 ? (-phaseRect.top) / phaseScrollable : 0;
     phaseProgress = Math.min(1, Math.max(0, phaseProgress));
     var phaseIdx = Math.min(4, Math.floor(phaseProgress * 5));
     if(phaseIdx !== currentPhase) setPhase(phaseIdx);
+    updateMethodTheme(phaseProgress);
+  }
+
+  function updateMethodTheme(progress){
+    var transition = Math.min(1, Math.max(0, (progress - 0.12) / 0.42));
+    var blend = function(dark, light){ return Math.round(dark + (light - dark) * transition); };
+    phaseSection.style.setProperty('--method-bg', blend(8, 248) + ',' + blend(8, 248) + ',' + blend(10, 248));
+    phaseSection.style.setProperty('--method-text', blend(184, 48) + ',' + blend(184, 48) + ',' + blend(188, 52));
+    phaseSection.style.setProperty('--method-muted', blend(133, 105) + ',' + blend(133, 105) + ',' + blend(140, 110));
+    phaseSection.style.setProperty('--method-heading', blend(245, 18) + ',' + blend(245, 18) + ',' + blend(245, 22));
+    phaseSection.style.setProperty('--method-accent', blend(245, 190) + ',' + blend(166, 112) + ',' + blend(35, 24));
+    phaseSection.style.setProperty('--method-accent-light', blend(255, 120) + ',' + blend(211, 70) + ',' + blend(122, 18));
+    phaseSection.style.setProperty('--method-border', blend(184, 48) + ',' + blend(184, 48) + ',' + blend(188, 52));
   }
 
   var ticking = false;
@@ -140,6 +160,7 @@
 
   sizeCanvas();
   preload();
+  updateMethodTheme(0);
 
   if(!reduceMotion){
     window.requestAnimationFrame(playAnimation);
