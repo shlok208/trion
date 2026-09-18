@@ -34,9 +34,9 @@
     navLinks.style.cssText += showing ? '' : 'position:absolute;top:100%;left:0;right:0;background:#08080a;flex-direction:column;padding:20px 40px;border-bottom:1px solid rgba(245,166,35,0.15);gap:18px;';
   });
 
-  // ---- Testimonials marquee: duplicate track for seamless loop ----
-  var tTrack = document.getElementById('tTrack');
-  tTrack.innerHTML += tTrack.innerHTML;
+  // ---- Selected work marquee: duplicate cards for a seamless loop ----
+  var projectTrack = document.getElementById('projectTrack');
+  projectTrack.innerHTML += projectTrack.innerHTML;
 
   // ---- Hero animation: continuous looping frame sequence + method phase highlight ----
   var heroOverlay = document.getElementById('heroOverlay');
